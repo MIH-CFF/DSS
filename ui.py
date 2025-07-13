@@ -5,6 +5,8 @@ from PyQt6.QtWidgets import (
     QLineEdit, QFileDialog, QRadioButton, QSpinBox, QMenu
 )
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap
+
 
 
 class BAUSimilarityWindow(QMainWindow):
@@ -12,10 +14,32 @@ class BAUSimilarityWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("BAU Similarity")
         self.resize(900, 600)
+    
 
         central = QWidget()
         self.setCentralWidget(central)
         main_v = QVBoxLayout(central)
+        
+        logo_h_layout = QHBoxLayout()
+        
+        # Added BAU logo- ASIF
+        bau_logo_label = QLabel()
+        bau_logo_pixmap = QPixmap("images/bau_logo.png") 
+        bau_logo_label.setFixedSize(130, 50)
+        bau_logo_label.setPixmap(bau_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        bau_logo_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        logo_h_layout.addWidget(bau_logo_label)
+        
+        # Added ict ministry logo on right
+        ict_logo_label = QLabel()
+        ict_logo_pixmap = QPixmap("images/ict_min_logo.png") 
+        ict_logo_label.setFixedSize(130, 50)
+        ict_logo_label.setPixmap(ict_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        ict_logo_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        logo_h_layout.addStretch(1) 
+        logo_h_layout.addWidget(ict_logo_label)
+        main_v.addLayout(logo_h_layout)
 
         # Top bar
         top_bar = QHBoxLayout()
@@ -88,10 +112,32 @@ class PhyloTreeWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Phylogenetic Tree")
         self.resize(900, 600)
-
+        
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
+        
+        
+        logo_h_layout = QHBoxLayout()
+        
+        # Added BAU logo- ASIF
+        bau_logo_label = QLabel()
+        bau_logo_pixmap = QPixmap("images/bau_logo.png") 
+        bau_logo_label.setFixedSize(130, 50)
+        bau_logo_label.setPixmap(bau_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        bau_logo_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        logo_h_layout.addWidget(bau_logo_label)
+        
+        # Added ict ministry logo on right
+        ict_logo_label = QLabel()
+        ict_logo_pixmap = QPixmap("images/ict_min_logo.png") 
+        ict_logo_label.setFixedSize(130, 50)
+        ict_logo_label.setPixmap(ict_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        ict_logo_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        logo_h_layout.addStretch(1) 
+        logo_h_layout.addWidget(ict_logo_label)
+        layout.addLayout(logo_h_layout)
 
         # Top controls
         top_h = QHBoxLayout()
