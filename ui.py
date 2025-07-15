@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
-
+from qt_material import apply_stylesheet
 
 
 class BAUSimilarityWindow(QMainWindow):
@@ -227,6 +227,7 @@ class PhyloTreeWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    apply_stylesheet(app, theme='dark_teal.xml')
     bau = BAUSimilarityWindow()
     phylo = PhyloTreeWindow()
     bau.show()
