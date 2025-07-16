@@ -45,7 +45,10 @@ class BAUSimilarityWindow(QMainWindow):
         logo_h_layout.addWidget(title,stretch=1)
         logo_h_layout.addWidget(ict_logo_label)
         main_v.addLayout(logo_h_layout)
-
+        
+        title.setObjectName("TitleLabel")
+        bau_logo_label.setProperty("logo", True)
+        ict_logo_label.setProperty("logo", True)
         # # Top bar
         # top_bar = QHBoxLayout()
         # logo = QLabel("BAU")
@@ -85,14 +88,22 @@ class BAUSimilarityWindow(QMainWindow):
         select = QFrame()
         select.setFrameShape(QFrame.Shape.StyledPanel)
         select_v = QHBoxLayout(select)
+        select.setStyleSheet("border:None;""margin-left:10px;""width:100px;""background-color:transparent;")
         select_v.addWidget(QLabel("Select Method"))
         self.method_combo = QComboBox()
         
         self.method_combo.addItems(["Method 1", "Method 2", "Method 3", "Method 4"])
         self.method_combo.setCurrentIndex(0)
+        self.method_combo.setStyleSheet("""
+                                        border: 1px solid #abadaf;
+                                        color: #00acc1;
+                                        font-weight: bold;
+                                        padding: 4px;
+                                        border-radius: 4px;
+                                        background-color:white;
+                                        """)
         select_v.addWidget(self.method_combo)
         select_v.addStretch(0)
-        select.setStyleSheet("border:none;""margin-left:10px;""width:100px;")
         content.addWidget(select, 0)
 
         # Main panel
@@ -158,13 +169,15 @@ class PhyloTreeWindow(QMainWindow):
         
         title = QLabel("BAU Similarity")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("font-size:30px;" "font-weight:bold;")
         logo_h_layout.addWidget(title,stretch=1) 
         
         logo_h_layout.addWidget(ict_logo_label)
         logo_h_layout.setContentsMargins(0, 5, 0, 20)
         layout.addLayout(logo_h_layout)
 
+        title.setObjectName("TitleLabel")
+        bau_logo_label.setProperty("logo", True)
+        ict_logo_label.setProperty("logo", True)
         # Top controls
         top_h = QHBoxLayout()
 
@@ -210,7 +223,7 @@ class PhyloTreeWindow(QMainWindow):
         opts_btn.setText("Options")
         opts_btn.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         opts_menu = QMenu()
-        opts_btn.setStyleSheet("width:100px;""color:#32dbba;""font-size:16px;""font-weight:bold;")
+        opts_btn.setStyleSheet("width:100px;")
         opts_menu.addAction("Option 1")
         opts_menu.addAction("Option 2")
         opts_btn.setMenu(opts_menu)
@@ -225,7 +238,7 @@ class PhyloTreeWindow(QMainWindow):
         lbl = QLabel("Phylogenetic Tree")
         lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
         tf_l.addWidget(lbl)
-        layout.addWidget(tree_frame, stretch=1)
+        layout.addWidget(tree_frame, stretch=4)
 
         # Bottom row
         bottom_h2 = QHBoxLayout()
@@ -264,7 +277,9 @@ class PhyloTreeWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    apply_stylesheet(app, theme='dark_teal.xml')
+    apply_stylesheet(app, theme='light_blue.xml')
+    with open("style.qss", "r") as file:
+        app.setStyleSheet(file.read())
     bau = BAUSimilarityWindow()
     phylo = PhyloTreeWindow()
     bau.show()

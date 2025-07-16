@@ -1,0 +1,150 @@
+/* General Background */
+QMainWindow,
+QWidget {
+  background-color: #f8f9fa; /* Soft White */
+  color: #212121; /* Primary Text */
+  font-family: Segoe UI, sans-serif;
+}
+
+/* Title Labels */
+QLabel#TitleLabel {
+  font-size: 28px;
+  font-weight: bold;
+  color: #30bac4; /* Deep Blue */
+  border: None;
+  background-color: transparent;
+}
+
+/* Logo Labels */
+QLabel[logo="true"] {
+  background-color: transparent;
+  border: none;
+}
+
+/*   Headings & Frame Titles   */
+QLabel {
+  font-size: 14px;
+  color: #212121;
+  border-color: #30bac4;
+}
+
+/*   Secondary Labels (e.g., tooltips, sublabels)   */
+QLabel[secondary="true"] {
+  color: #616161; /* Slate Gray */
+  font-size: 13px;
+}
+
+/*   QPushButton   */
+QPushButton {
+  background-color: #30bac4; /* Deep Blue */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+QPushButton:hover {
+  background-color: #27959d;
+}
+
+QPushButton:pressed {
+  background-color: #30bac4;
+}
+
+/*   QComboBox   */
+QComboBox {
+  border: 1px solid #abadaf;
+  color: #00acc1;
+  font-weight: bold;
+  padding: 4px;
+
+  border-radius: 4px;
+}
+
+QCombobox:focus {
+  border-color: #abadaf; /* Aqua */
+}
+
+/*   QListWidget   */
+QListWidget {
+  border: 1px solid #abadaf;
+  background-color: white;
+  padding: 4px;
+}
+
+/*   QLineEdit   */
+QLineEdit {
+  border: 1px solid #abadaf;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: white;
+}
+
+QLineEdit:focus {
+  border-color: #26c6da;
+}
+
+/*   QSpinBox   */
+QSpinBox {
+  background-color: #ffffff;
+  border: 1px solid #abadaf;
+  border-radius: 4px;
+  padding: 4px 6px;
+  color: #212121;
+  font-size: 14px;
+}
+
+/* Focus state */
+QSpinBox:focus {
+  border: 1px solid #26c6da;
+  background-color: #ffffff;
+}
+
+/*   QRadioButton   */
+QRadioButton {
+  padding: 6px;
+  color: #212121;
+}
+
+/*  QToolButton Style */
+QToolButton {
+  background-color: #30bac4;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+/* Hover Effect */
+QToolButton:hover {
+  background-color: #1b8b99; /* Brighter Aqua on hover */
+  color: #ffffff;
+}
+
+/* Pressed/Clicked State */
+QToolButton:pressed {
+  background-color: #00838f; /* Slightly darker Aqua */
+  color: #ffffff;
+}
+
+/* Optional: Give it a border for subtle separation */
+QToolButton[bordered="true"] {
+  border: 1px solid #26c6da;
+}
+
+/*   Framed Sections   */
+QFrame {
+  border: 1px solid #abadaf;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+/*   Margin Fix for Layout Containers   */
+QVBoxLayout,
+QHBoxLayout {
+  margin: 4px;
+  padding: 6px;
+}
