@@ -5,14 +5,15 @@ from PyQt6.QtWidgets import (
     QLineEdit, QFileDialog, QRadioButton, QSpinBox, QMenu
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap
-
+from PyQt6.QtGui import QPixmap,QIcon
+from qt_material import apply_stylesheet
 
 
 class BAUSimilarityWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BAU Similarity")
+        self.setWindowIcon(QIcon("images/demo_logo.png"))
         self.resize(900, 600)
     
 
@@ -28,6 +29,7 @@ class BAUSimilarityWindow(QMainWindow):
         bau_logo_label.setFixedSize(130, 50)
         bau_logo_label.setPixmap(bau_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         bau_logo_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        bau_logo_label.setStyleSheet("background-color: transparent;""border:none;")
         logo_h_layout.addWidget(bau_logo_label)
         
         # Added ict ministry logo on right
@@ -36,46 +38,62 @@ class BAUSimilarityWindow(QMainWindow):
         ict_logo_label.setFixedSize(130, 50)
         ict_logo_label.setPixmap(ict_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         ict_logo_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-
-        logo_h_layout.addStretch(1) 
+        ict_logo_label.setStyleSheet("background-color: transparent;""border:none;")
+        title = QLabel("BAU Similarity")
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setStyleSheet("font-size:30px;" "font-weight:bold;")
+        logo_h_layout.addWidget(title,stretch=1)
         logo_h_layout.addWidget(ict_logo_label)
         main_v.addLayout(logo_h_layout)
 
-        # Top bar
-        top_bar = QHBoxLayout()
-        logo = QLabel("BAU")
-        logo.setFrameShape(QFrame.Shape.Box)
-        logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        logo.setFixedSize(60, 30)
+        # # Top bar
+        # top_bar = QHBoxLayout()
+        # logo = QLabel("BAU")
+        # logo.setFrameShape(QFrame.Shape.Box)
+        # logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # logo.setFixedSize(60, 30)
 
-        title = QLabel("BAU Similarity")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
 
-        menu_btn = QPushButton("Menu")
-        menu_btn.setFixedSize(60, 30)
+        # menu_btn = QPushButton("Menu")
+        # menu_btn.setFixedSize(90, 30)
 
-        top_bar.addWidget(logo)
-        top_bar.addWidget(title, stretch=1)
-        top_bar.addWidget(menu_btn)
-        main_v.addLayout(top_bar)
+        # top_bar.addWidget(logo)
+        # top_bar.addStretch(1)
+        # top_bar.addWidget(menu_btn)
+        # main_v.addLayout(top_bar)
 
         # Content
-        content = QHBoxLayout()
+        content = QVBoxLayout()
 
         # Left panel
-        left = QFrame()
-        left.setFrameShape(QFrame.Shape.StyledPanel)
-        left_l = QVBoxLayout(left)
-        left_l.addWidget(QLabel("Select Method"))
-        self.method_combo = QComboBox()
-        self.method_combo.addItems(["Method 1", "Method 2", "Method 3", "Method 4"])
-        left_l.addWidget(self.method_combo)
+        # left = QFrame()
+        # left.setFrameShape(QFrame.Shape.StyledPanel)
+        # left_l = QVBoxLayout(left)
+        # left_l.addWidget(QLabel("Select Method"))
+        # self.method_combo = QComboBox()
+        # self.method_combo.addItems(["Method 1", "Method 2", "Method 3", "Method 4"])
+        # left_l.addWidget(self.method_combo)
 
-        self.method_list = QListWidget()
-        self.method_list.addItems(["opt1", "opt2", "opt3", "opt4"])
-        left_l.addWidget(self.method_list)
-        left_l.addStretch()
-        content.addWidget(left, 0)
+        # self.method_list = QListWidget()
+        # self.method_list.addItems(["opt1", "opt2", "opt3", "opt4"])
+        # left_l.addWidget(self.method_list)
+        # left_l.addStretch()
+        # content.addWidget(left, 0)
+        
+        # method selection
+        select = QFrame()
+        select.setFrameShape(QFrame.Shape.StyledPanel)
+        select_v = QHBoxLayout(select)
+        select_v.addWidget(QLabel("Select Method"))
+        self.method_combo = QComboBox()
+        
+        self.method_combo.addItems(["Method 1", "Method 2", "Method 3", "Method 4"])
+        self.method_combo.setCurrentIndex(0)
+        select_v.addWidget(self.method_combo)
+        select_v.addStretch(0)
+        select.setStyleSheet("border:none;""margin-left:10px;""width:100px;")
+        content.addWidget(select, 0)
 
         # Main panel
         main_panel = QFrame()
@@ -111,6 +129,7 @@ class PhyloTreeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Phylogenetic Tree")
+        self.setWindowIcon(QIcon("images/demo_logo.png"))
         self.resize(900, 600)
         
         central = QWidget()
@@ -126,6 +145,7 @@ class PhyloTreeWindow(QMainWindow):
         bau_logo_label.setFixedSize(130, 50)
         bau_logo_label.setPixmap(bau_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         bau_logo_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        bau_logo_label.setStyleSheet("background-color: transparent;""border:none;")
         logo_h_layout.addWidget(bau_logo_label)
         
         # Added ict ministry logo on right
@@ -134,9 +154,15 @@ class PhyloTreeWindow(QMainWindow):
         ict_logo_label.setFixedSize(130, 50)
         ict_logo_label.setPixmap(ict_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         ict_logo_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-
-        logo_h_layout.addStretch(1) 
+        ict_logo_label.setStyleSheet("background-color: transparent;""border:none;")
+        
+        title = QLabel("BAU Similarity")
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setStyleSheet("font-size:30px;" "font-weight:bold;")
+        logo_h_layout.addWidget(title,stretch=1) 
+        
         logo_h_layout.addWidget(ict_logo_label)
+        logo_h_layout.setContentsMargins(0, 5, 0, 20)
         layout.addLayout(logo_h_layout)
 
         # Top controls
@@ -146,16 +172,18 @@ class PhyloTreeWindow(QMainWindow):
         browse_h = QHBoxLayout()
         browse_h.addWidget(QLabel("Browse Fasta"))
         self.path_edit = QLineEdit()
+        self.path_edit.setStyleSheet("width:200px;")
         self.path_edit.setReadOnly(True)
         browse_h.addWidget(self.path_edit)
         browse_btn = QPushButton("Browse...")
         browse_btn.clicked.connect(self.browse_fasta)
+        browse_btn.setStyleSheet("margin-left:5px;")
         browse_h.addWidget(browse_btn)
         browse_h.addWidget(QLabel("Count:"))
         self.count_label = QLabel("0")
         browse_h.addWidget(self.count_label)
         browse_h.addStretch()
-        top_h.addLayout(browse_h)
+        top_h.addLayout(browse_h,stretch=1)
 
         # Select k
         select_h = QHBoxLayout()
@@ -182,6 +210,7 @@ class PhyloTreeWindow(QMainWindow):
         opts_btn.setText("Options")
         opts_btn.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         opts_menu = QMenu()
+        opts_btn.setStyleSheet("width:100px;""color:#32dbba;""font-size:16px;""font-weight:bold;")
         opts_menu.addAction("Option 1")
         opts_menu.addAction("Option 2")
         opts_btn.setMenu(opts_menu)
@@ -200,12 +229,20 @@ class PhyloTreeWindow(QMainWindow):
 
         # Bottom row
         bottom_h2 = QHBoxLayout()
+        bottom_h2.addStretch(1)
         bottom_h2.addWidget(QLabel("Box"))
         bottom_h2.addWidget(QPushButton("Rotate"))
-        bottom_h2.addStretch(1)
-        bottom_h2.addWidget(QLabel("Movie Tree"))
-        bottom_h2.addStretch(2)
+        
         layout.addLayout(bottom_h2)
+        
+        # Newic Tree frame
+        newick_tree_frame = QFrame()
+        newick_tree_frame.setFrameShape(QFrame.Shape.Box)
+        ntf_l = QVBoxLayout(newick_tree_frame)
+        n_lbl = QLabel("Newick Tree")
+        n_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        ntf_l.addWidget(n_lbl)
+        layout.addWidget(newick_tree_frame, stretch=1)
 
     def browse_fasta(self):
         fname, _ = QFileDialog.getOpenFileName(
@@ -227,6 +264,7 @@ class PhyloTreeWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    apply_stylesheet(app, theme='dark_teal.xml')
     bau = BAUSimilarityWindow()
     phylo = PhyloTreeWindow()
     bau.show()
