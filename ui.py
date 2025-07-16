@@ -49,40 +49,9 @@ class BAUSimilarityWindow(QMainWindow):
         title.setObjectName("TitleLabel")
         bau_logo_label.setProperty("logo", True)
         ict_logo_label.setProperty("logo", True)
-        # # Top bar
-        # top_bar = QHBoxLayout()
-        # logo = QLabel("BAU")
-        # logo.setFrameShape(QFrame.Shape.Box)
-        # logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # logo.setFixedSize(60, 30)
-
-        
-
-        # menu_btn = QPushButton("Menu")
-        # menu_btn.setFixedSize(90, 30)
-
-        # top_bar.addWidget(logo)
-        # top_bar.addStretch(1)
-        # top_bar.addWidget(menu_btn)
-        # main_v.addLayout(top_bar)
 
         # Content
         content = QVBoxLayout()
-
-        # Left panel
-        # left = QFrame()
-        # left.setFrameShape(QFrame.Shape.StyledPanel)
-        # left_l = QVBoxLayout(left)
-        # left_l.addWidget(QLabel("Select Method"))
-        # self.method_combo = QComboBox()
-        # self.method_combo.addItems(["Method 1", "Method 2", "Method 3", "Method 4"])
-        # left_l.addWidget(self.method_combo)
-
-        # self.method_list = QListWidget()
-        # self.method_list.addItems(["opt1", "opt2", "opt3", "opt4"])
-        # left_l.addWidget(self.method_list)
-        # left_l.addStretch()
-        # content.addWidget(left, 0)
         
         # method selection
         select = QFrame()
