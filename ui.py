@@ -29,7 +29,6 @@ class BAUSimilarityWindow(QMainWindow):
         bau_logo_label.setFixedSize(130, 50)
         bau_logo_label.setPixmap(bau_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         bau_logo_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        bau_logo_label.setStyleSheet("background-color: transparent;""border:none;")
         logo_h_layout.addWidget(bau_logo_label)
         
         # Added ict ministry logo on right
@@ -38,10 +37,8 @@ class BAUSimilarityWindow(QMainWindow):
         ict_logo_label.setFixedSize(130, 50)
         ict_logo_label.setPixmap(ict_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         ict_logo_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        ict_logo_label.setStyleSheet("background-color: transparent;""border:none;")
         title = QLabel("BAU Similarity")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("font-size:30px;" "font-weight:bold;")
         logo_h_layout.addWidget(title,stretch=1)
         logo_h_layout.addWidget(ict_logo_label)
         main_v.addLayout(logo_h_layout)
@@ -125,7 +122,6 @@ class PhyloTreeWindow(QMainWindow):
         bau_logo_label.setFixedSize(130, 50)
         bau_logo_label.setPixmap(bau_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         bau_logo_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        bau_logo_label.setStyleSheet("background-color: transparent;""border:none;")
         logo_h_layout.addWidget(bau_logo_label)
         
         # Added ict ministry logo on right
@@ -134,7 +130,6 @@ class PhyloTreeWindow(QMainWindow):
         ict_logo_label.setFixedSize(130, 50)
         ict_logo_label.setPixmap(ict_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         ict_logo_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        ict_logo_label.setStyleSheet("background-color: transparent;""border:none;")
         
         title = QLabel("BAU Similarity")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -159,7 +154,6 @@ class PhyloTreeWindow(QMainWindow):
         browse_h.addWidget(self.path_edit)
         browse_btn = QPushButton("Browse...")
         browse_btn.clicked.connect(self.browse_fasta)
-        browse_btn.setStyleSheet("margin-left:5px;")
         browse_h.addWidget(browse_btn)
         browse_h.addWidget(QLabel("Count:"))
         self.count_label = QLabel("0")
