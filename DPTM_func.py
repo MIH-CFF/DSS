@@ -1,11 +1,4 @@
-from Bio import SeqIO
-import numpy as np
-import os
-from sklearn.metrics.pairwise import pairwise_distances
-from Bio import Phylo
-from Bio.Phylo.TreeConstruction import DistanceMatrix, DistanceTreeConstructor, DistanceCalculator
-
-from Bio.Seq import Seq
+from imports import*
 
 dictmapping = {"aa": 0}
 
