@@ -6,7 +6,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['matplotlib', 'matplotlib.backends.backend_tkagg', 'matplotlib.backends.backend_pdf'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -36,4 +36,16 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon=['icon.ico'],
+)
+
+# Collect all necessary files for matplotlib and qt_material
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='DNA_Sequence_Similarities',
 )
