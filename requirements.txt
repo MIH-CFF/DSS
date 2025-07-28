@@ -3,3 +3,5 @@ PyQt6-Qt6==6.9.1
 PyQt6_sip==13.10.2
 qt-material==2.17
 pyinstaller==6.14.2
+matplotlib==3.9.2
+matplotlib-inline==0.1.7
