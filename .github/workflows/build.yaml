@@ -27,18 +27,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Build executable with PyInstaller
-        run: |
-          pyinstaller DSS.py ^
-            --name DNA_Sequence_Similarities ^
-            --onefile ^
-            --windowed ^
-            --icon=icon.ico ^
-            --hidden-import=matplotlib ^
-            --hidden-import=matplotlib.backends.backend_tkagg ^
-            --hidden-import=matplotlib.backends.backend_pdf ^
-            --collect-all matplotlib ^
-            --collect-all qt_material ^
-            --collect-all PyQt6
+        run: pyinstaller DSS.py --name DNA_Sequence_Similarities --onefile --windowed --icon=icon.ico --hidden-import=matplotlib --hidden-import=matplotlib.backends.backend_tkagg --hidden-import=matplotlib.backends.backend_pdf --collect-all matplotlib --collect-all qt_material --collect-all PyQt6
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
