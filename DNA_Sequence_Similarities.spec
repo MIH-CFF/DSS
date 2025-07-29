@@ -1,16 +1,38 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os
 
+# Check if files exist before adding them
+datas = []
+if os.path.exists('style.qss'):
+    datas.append(('style.qss', '.'))
+if os.path.exists('images'):
+    datas.append(('images', 'images'))
 
 a = Analysis(
     ['DSS.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=['matplotlib', 'matplotlib.backends.backend_tkagg', 'matplotlib.backends.backend_pdf'],
+    datas=datas,
+    hiddenimports=[
+        'matplotlib', 
+        'matplotlib.backends.backend_tkagg', 
+        'matplotlib.backends.backend_pdf',
+        'Bio',
+        'Bio.Phylo',
+        'Bio.SeqIO', 
+        'Bio.Seq',
+        'Bio.Phylo.TreeConstruction',
+        'sklearn.metrics.pairwise',
+        'numpy',
+        'qt_material',
+        'PyQt6.QtCore',
+        'PyQt6.QtGui',
+        'PyQt6.QtWidgets'
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['PyQt5'],
+    excludes=['PyQt5', 'tkinter', 'matplotlib.tests'],
     noarchive=False,
     optimize=0,
 )
@@ -35,17 +57,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon.ico'],
-)
-
-# Collect all necessary files for matplotlib and qt_material
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='DNA_Sequence_Similarities',
+    icon='icon.ico' if os.path.exists('icon.ico') else None,
 )
