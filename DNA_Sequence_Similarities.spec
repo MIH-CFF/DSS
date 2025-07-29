@@ -1,12 +1,19 @@
 # -*- mode: python ; coding: utf-8 -*-
 import os
+from PyInstaller.utils.hooks import collect_data_files
 
 # Check if files exist before adding them
 datas = []
 if os.path.exists('style.qss'):
     datas.append(('style.qss', '.'))
+
+# Add images folder
 if os.path.exists('images'):
     datas.append(('images', 'images'))
+
+# Collect BioPython data files
+bio_datas = collect_data_files('Bio')
+datas.extend(bio_datas)
 
 a = Analysis(
     ['DSS.py'],
@@ -22,6 +29,8 @@ a = Analysis(
         'Bio.SeqIO', 
         'Bio.Seq',
         'Bio.Phylo.TreeConstruction',
+        'Bio.Align',
+        'Bio.Align.substitution_matrices',
         'sklearn.metrics.pairwise',
         'numpy',
         'qt_material',
