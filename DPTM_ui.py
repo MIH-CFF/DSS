@@ -1,9 +1,33 @@
 from imports import *
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+def load_pixmap_safely(image_path, default_size=(130, 50)):
+    """Load pixmap safely with fallback"""
+    full_path = resource_path(image_path)
+    if os.path.exists(full_path):
+        return QPixmap(full_path)
+    else:
+        # Create a colored rectangle as fallback
+        pixmap = QPixmap(*default_size)
+        pixmap.fill(Qt.GlobalColor.lightGray)
+        return pixmap
+
 class PhyloTreeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Phylogenetic Tree")
-        self.setWindowIcon(QIcon("images/demo_logo.png"))
+        # Set window icon safely
+        icon_path = resource_path("images/demo_logo.png")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
         self.resize(900, 600)
         self.move(100,50)
         
@@ -16,7 +40,7 @@ class PhyloTreeWindow(QMainWindow):
         
         # Added BAU logo- ASIF
         bau_logo_label = QLabel()
-        bau_logo_pixmap = QPixmap("images/bau_logo.png") 
+        bau_logo_pixmap = load_pixmap_safely("images/bau_logo.png", (130, 50))
         bau_logo_label.setFixedSize(130, 50)
         bau_logo_label.setPixmap(bau_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         bau_logo_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -24,7 +48,7 @@ class PhyloTreeWindow(QMainWindow):
         
         # Added ict ministry logo on right
         ict_logo_label = QLabel()
-        ict_logo_pixmap = QPixmap("images/ict_min_logo.png") 
+        ict_logo_pixmap = load_pixmap_safely("images/ict_min_logo.png", (130, 50))
         ict_logo_label.setFixedSize(130, 50)
         ict_logo_label.setPixmap(ict_logo_pixmap.scaled(130, 50, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         ict_logo_label.setAlignment(Qt.AlignmentFlag.AlignRight)
