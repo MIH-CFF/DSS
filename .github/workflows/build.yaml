@@ -36,8 +36,7 @@ jobs:
           if (Test-Path "images") { Write-Host "images folder found" } else { Write-Warning "images folder not found" }
 
       - name: Build executable with PyInstaller
-        run: |
-          pyinstaller DSS.py --name DNA_Sequence_Similarities --onefile --windowed --icon=icon.ico --hidden-import=matplotlib --hidden-import=matplotlib.backends.backend_tkagg --hidden-import=matplotlib.backends.backend_pdf --hidden-import=biopython --hidden-import=Bio --hidden-import=Bio.Phylo --hidden-import=Bio.SeqIO --hidden-import=Bio.Seq --collect-all matplotlib --collect-all qt_material --collect-all PyQt6 --collect-all biopython --add-data "style.qss;." --add-data "images;images"
+        run: pyinstaller --clean DNA_Sequence_Similarities.spec
 
       - name: Verify build output
         run: |
