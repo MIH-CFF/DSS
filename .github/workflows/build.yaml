@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
   build:
@@ -26,12 +27,30 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build executable with PyInstaller
-        run: pyinstaller DSS.py --name DNA_Sequence_Similarities --onefile --windowed --icon=icon.ico --hidden-import=matplotlib --hidden-import=matplotlib.backends.backend_tkagg --hidden-import=matplotlib.backends.backend_pdf --collect-all matplotlib --collect-all qt_material --collect-all PyQt6
+      - name: Verify files exist
+        run: |
+          if (Test-Path "DSS.py") { Write-Host "DSS.py found" } else { Write-Error "DSS.py not found" }
+          if (Test-Path "icon.ico") { Write-Host "icon.ico found" } else { Write-Warning "icon.ico not found" }
+          if (Test-Path "style.qss") { Write-Host "style.qss found" } else { Write-Warning "style.qss not found" }
+          if (Test-Path "images") { Write-Host "images folder found" } else { Write-Warning "images folder not found" }
 
+      - name: Build executable with PyInstaller
+        run: |
+          pyinstaller DSS.py --name DNA_Sequence_Similarities --onefile --windowed --icon=icon.ico --hidden-import=matplotlib --hidden-import=matplotlib.backends.backend_tkagg --hidden-import=matplotlib.backends.backend_pdf --hidden-import=biopython --hidden-import=Bio --hidden-import=Bio.Phylo --hidden-import=Bio.SeqIO --hidden-import=Bio.Seq --collect-all matplotlib --collect-all qt_material --collect-all PyQt6 --collect-all biopython --add-data "style.qss;." --add-data "images;images"
+
+      - name: Verify build output
+        run: |
+          if (Test-Path "dist/DNA_Sequence_Similarities.exe") { 
+            Write-Host "Build successful! Executable created."
+            Get-ChildItem dist/DNA_Sequence_Similarities.exe | Format-List Name, Length, LastWriteTime
+          } else { 
+            Write-Error "Build failed! Executable not found."
+            exit 1
+          }
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: DNA_Sequence_Similarities
+          name: DNA_Sequence_Similarities-Windows
           path: dist/DNA_Sequence_Similarities.exe
+          retention-days: 30
