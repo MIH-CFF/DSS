@@ -1,4 +1,48 @@
 from imports import *
+class Loading(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Loading...")
+        self.setWindowIcon(QIcon("images/demo_logo.png"))
+        self.setStyleSheet("background-color:white")
+        self.setFixedSize(200, 200)
+        self.setModal(True)  
+
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label = QLabel("")
+        self.movie = QMovie("images/loading.gif")  
+        self.label.setStyleSheet("border:none")
+        self.movie.setScaledSize(QSize(200,200))
+        self.label.setMovie(self.movie)
+        self.movie.start()
+        # self.pix=QPixmap("images/demo_logo.png")
+        
+        # self.pix=self.pix.scaled(200,200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        # self.label.setPixmap(self.pix)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
+class Works(QThread):
+    finished = pyqtSignal(object)
+    error = pyqtSignal(Exception)
+
+    def __init__(self, fname, k_len, thresh):
+        super().__init__()
+        self.fname = fname
+        self.k_len = k_len
+        self.thresh = thresh
+
+    def run(self):
+        try:
+            dtm = DPTM_func.DynamicTM
+            result = dtm.read_fas1(self.fname, self.k_len, self.thresh, self=None)
+            self.finished.emit(result)
+        except Exception as e:
+            self.error.emit(e)
+        
 class PhyloTreeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -83,7 +127,7 @@ class PhyloTreeWindow(QMainWindow):
         top_h.addLayout(select_h)
 
         layout.addLayout(top_h)
-
+        self.loading = Loading()
         # Options button
         opts_h = QHBoxLayout()
         draw_btn = QPushButton("Generate Phylogenetic tree")
@@ -156,44 +200,47 @@ class PhyloTreeWindow(QMainWindow):
         except Exception:
             count = 0
         self.count_label.setText(str(count))
-    
     def draw_phylo(self):
         if self.fname==None:
             QMessageBox.critical(self,"Error","Select File First")
-        else:
-            try:
-                dtm = DPTM_func.DynamicTM
+            return
+        
+        k_len = 4 if self.rb_default.isChecked() else self.spin_k.value()
+        thresh = 50 if self.t_df_default.isChecked() else self.t_spin.value()
                 
-                if self.rb_default.isChecked():
-                    k_len=4
-                else:
-                    k_len=self.spin_k.value()
-                
-                if self.t_df_default.isChecked():
-                    thresh=50
-                else:
-                    thresh=self.t_spin.value()
-                    
-                tree_rcv = dtm.read_fas1(self.fname,k_len,thresh,self=None)
+        self.loading.show() 
+        self.loading.show()
 
-                current_directory = os.getcwd()
-                fig = plt.figure(figsize=(16,10), dpi=100)
-                axes = fig.add_subplot(1, 1, 1)
-                Phylo.draw(tree_rcv, axes=axes, do_show=False)
-                fig_name = current_directory + '/phylogenetic_tree/' + 'phylo.png'
-                #plt.savefig('v5.png')
-                plt.savefig(fig_name)
-                plt.show()
-                plt.close()
-                phylo_tree_path = 'phylogenetic_tree/phylo.png'
-                lbl_pix=QPixmap(phylo_tree_path)
-                self.real_img=lbl_pix
-                lbl_pix=lbl_pix.scaled(800,500, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-                self.lbl.setPixmap(lbl_pix)
-                # Set the file pointer to the beginning of the stream
-            except Exception as e:
-                print(e)
-            
+        self.work = Works(self.fname, k_len, thresh)
+        self.work.finished.connect(self.handle_result)
+        self.work.error.connect(self.handle_error)
+        self.work.start()
+
+    def handle_result(self, tree_rcv):
+        self.loading.close()
+
+        try:
+            current_directory = os.getcwd()
+            fig = plt.figure(figsize=(16,10), dpi=100)
+            axes = fig.add_subplot(1, 1, 1)
+            Phylo.draw(tree_rcv, axes=axes, do_show=False)
+            fig_name = current_directory + '/phylogenetic_tree/' + 'phylo.png'
+            plt.savefig(fig_name)
+            plt.show()
+            plt.close()
+
+            phylo_tree_path = 'phylogenetic_tree/phylo.png'
+            lbl_pix = QPixmap(phylo_tree_path)
+            self.real_img = lbl_pix
+            lbl_pix = lbl_pix.scaled(800, 500, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            self.lbl.setPixmap(lbl_pix)
+        except Exception as e:
+            QMessageBox.critical(self, "Error", "Error Generating image try again")
+    def handle_error(self, e):
+        self.loading.close()
+        QMessageBox.critical(self, "Error", f"An error occurred:\n{str(e)}")
+
+   
     def save_tree(self):
         try:
             if self.real_img:

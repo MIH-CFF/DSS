@@ -86,7 +86,7 @@ class BAUSimilarityWindow(QMainWindow):
                 DPTM_ui.run()
             else:
                 QMessageBox.information(self, "Information", "The method is currently being implemented!")
-        except:
+        except():
             QMessageBox.information(self, "Error", "Please check everything and try again!")
 
        
