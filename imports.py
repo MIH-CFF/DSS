@@ -22,3 +22,8 @@ import time
         
 import DPTM_func
 import DPTM_ui
+
+# todo: move to a better place, make sure it runs only once
+phylo_dir = "phylogenetic_tree"
+if not os.path.exists(phylo_dir):
+    os.makedirs(phylo_dir)
