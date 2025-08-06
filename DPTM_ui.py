@@ -248,6 +248,8 @@ class PhyloTreeWindow(QMainWindow):
             fig = plt.figure(figsize=(16,10), dpi=100)
             axes = fig.add_subplot(1, 1, 1)
             Phylo.draw(tree_rcv, axes=axes, do_show=False)
+            if not os.path.exists('phylogenetic_tree'):
+                os.mkdir('phylogenetic_tree')
             fig_name = current_directory + '/phylogenetic_tree/' + 'phylo.png'
             plt.savefig(fig_name)
             plt.show()

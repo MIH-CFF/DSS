@@ -119,7 +119,7 @@ if __name__ == "__main__":
     apply_stylesheet(app, theme='light_blue.xml')
     
     # Load stylesheet safely
-    style_path = resource_path("style.qss")
+    style_path = resource_path("asset\\style.qss")
     if os.path.exists(style_path):
         with open(style_path, "r") as file:
             app.setStyleSheet(file.read())
