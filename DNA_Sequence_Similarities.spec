@@ -4,8 +4,8 @@ from PyInstaller.utils.hooks import collect_data_files
 
 # Check if files exist before adding them
 datas = []
-if os.path.exists('style.qss'):
-    datas.append(('style.qss', '.'))
+if os.path.exists('asset/style.qss'):
+    datas.append(('asset/style.qss', '.'))
 
 # Add images folder
 if os.path.exists('images'):
@@ -66,5 +66,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='icon.ico' if os.path.exists('icon.ico') else None,
+    icon='images/icon.ico' if os.path.exists('images/icon.ico') else None,
 )
