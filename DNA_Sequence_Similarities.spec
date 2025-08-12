@@ -16,7 +16,7 @@ bio_datas = collect_data_files('Bio')
 datas.extend(bio_datas)
 
 a = Analysis(
-    ['DSS.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=datas,
