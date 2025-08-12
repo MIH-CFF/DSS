@@ -30,7 +30,7 @@ jobs:
 
       - name: Verify files exist
         run: |
-          if (Test-Path "DSS.py") { Write-Host "DSS.py found" } else { Write-Error "DSS.py not found" }
+          if (Test-Path "main.py") { Write-Host "main.py found" } else { Write-Error "main.py not found" }
           if (Test-Path "images/icon.ico") { Write-Host "icon.ico found" } else { Write-Warning "icon.ico not found" }
           if (Test-Path "asset/style.qss") { Write-Host "style.qss found" } else { Write-Warning "style.qss not found" }
           if (Test-Path "images") { Write-Host "images folder found" } else { Write-Warning "images folder not found" }
