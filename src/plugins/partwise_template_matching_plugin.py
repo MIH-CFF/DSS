@@ -176,9 +176,11 @@ class PartWiseTemplateMatchingProcessor(ISequenceProcessor):
         parts = self._create_sequence_parts(sequence, part_size, overlap, max_parts)
         
         if not parts:
-            return np.zeros(10)  # Return default feature vector
+            # Return standardized feature vector size
+            return np.zeros(max_parts * 8)  # 8 features per part
         
         all_features = []
+        features_per_part = 8  # Fixed number of features per part
         
         for part_idx, part_seq in enumerate(parts):
             # Extract templates from this part
@@ -194,9 +196,26 @@ class PartWiseTemplateMatchingProcessor(ISequenceProcessor):
                 part_idx if weight_by_position else None
             )
             
+            # Ensure exactly 8 features per part
+            if len(part_features) < features_per_part:
+                part_features.extend([0.0] * (features_per_part - len(part_features)))
+            elif len(part_features) > features_per_part:
+                part_features = part_features[:features_per_part]
+            
             all_features.extend(part_features)
         
-        return np.array(all_features)
+        # Ensure consistent feature vector size across all sequences
+        target_size = max_parts * features_per_part
+        final_features = np.array(all_features)
+        
+        if len(final_features) < target_size:
+            # Pad with zeros if fewer parts
+            final_features = np.pad(final_features, (0, target_size - len(final_features)), mode='constant')
+        elif len(final_features) > target_size:
+            # Truncate if more parts (should not happen with max_parts limit)
+            final_features = final_features[:target_size]
+        
+        return final_features
     
     def _create_sequence_parts(
         self,
