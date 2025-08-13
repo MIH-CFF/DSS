@@ -28,7 +28,7 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Test all datasets
-        run: python3 test_all_datasets.py > test_output.log
+        run: python3 test_all_datasets.py | tee test_output.log
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
