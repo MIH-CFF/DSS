@@ -172,6 +172,7 @@ class ChaosGameFrequencyProcessor(ISequenceProcessor):
             windows = [sequence]
         
         all_features = []
+        base_feature_size = grid_resolution * grid_resolution
         
         for window in windows:
             # Generate CGR coordinates for this window
@@ -190,7 +191,22 @@ class ChaosGameFrequencyProcessor(ISequenceProcessor):
             features = freq_grid.flatten()
             all_features.extend(features)
         
-        return np.array(all_features)
+        # Ensure consistent feature vector size across all sequences
+        final_features = np.array(all_features)
+        
+        # If sliding windows are used, pad or truncate to consistent size
+        if use_sliding:
+            max_windows = max(1, len(sequence) // step_size)  # Estimate max windows
+            target_size = base_feature_size * min(10, max_windows)  # Limit to 10 windows max
+            
+            if len(final_features) < target_size:
+                # Pad with zeros
+                final_features = np.pad(final_features, (0, target_size - len(final_features)), mode='constant')
+            elif len(final_features) > target_size:
+                # Truncate
+                final_features = final_features[:target_size]
+        
+        return final_features
     
     def _create_sliding_windows(
         self, 
