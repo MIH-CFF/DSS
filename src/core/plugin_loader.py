@@ -45,6 +45,24 @@ class PluginLoader:
             ])
         except ImportError as e:
             print(f"Failed to load stub plugins: {e}")
+        
+        # Load new enhanced plugins
+        try:
+            from src.plugins.cgr_plugin import CGRProcessor
+            from src.plugins.template_matching_v2_plugin import TemplateMatchingV2Processor
+            from src.plugins.partwise_template_matching_v2_plugin import PartWiseTemplateMatchingV2Processor
+            
+            plugin_registry.register_processor(CGRProcessor())
+            plugin_registry.register_processor(TemplateMatchingV2Processor())
+            plugin_registry.register_processor(PartWiseTemplateMatchingV2Processor())
+            
+            self.loaded_plugins.update([
+                "CGRProcessor",
+                "TemplateMatchingV2Processor", 
+                "PartWiseTemplateMatchingV2Processor"
+            ])
+        except ImportError as e:
+            print(f"Failed to load enhanced plugins: {e}")
     
     def _load_adapter_plugins(self):
         """Load adapter plugins"""
