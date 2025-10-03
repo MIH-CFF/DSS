@@ -19,8 +19,8 @@ from src.ui import MainWindow, AnalysisWindow, create_application, main
 
 # Plugins
 from src.plugins import (
-    DPTMProcessor, ChaosGameFrequencyProcessor,
-    TemplateMatchingProcessor, PartWiseTemplateMatchingProcessor
+    DPTMProcessor, CGRProcessor,
+    TMProcessor, PTMProcessor
 )
 
 # Adapters
@@ -43,8 +43,8 @@ __all__ = [
     'MainWindow', 'AnalysisWindow', 'create_application', 'main',
     
     # Plugins
-    'DPTMProcessor', 'ChaosGameFrequencyProcessor',
-    'TemplateMatchingProcessor', 'PartWiseTemplateMatchingProcessor',
+    'DPTMProcessor', 'CGRProcessor',
+    'TMProcessor', 'PTMProcessor',
     
     # Adapters
     'BioPythonSequenceLoader', 'MatplotlibTreeVisualizer',

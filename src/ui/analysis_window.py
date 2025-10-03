@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
     QMessageBox
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QIcon, QPixmap
+from PyQt6.QtGui import QIcon, QPixmap, QGuiApplication
 
 from src.core.analysis_service import AnalysisService
 from src.core.interfaces import AnalysisResult, MethodConfig
@@ -112,12 +112,32 @@ class AnalysisWindow(QMainWindow):
         if self.method_name == "Dynamic Part-wise Template Matching":
             self._create_k_selection_controls(top_h)
         
-        # Template length selection (for Template Matching method)
+        # K-length selection (for CGR method)
+        if self.method_name == "Chaos Game Frequency Representation":
+            self._create_k_selection_controls(top_h)
+        
+        # Partition selection (for Template Matching method)
         if self.method_name == "Template Matching":
-            self._create_template_selection_controls(top_h)
+            self._create_partition_selection_controls(top_h)
+            
+        # Partition selection (for Part-wise Template Matching method)
+        if self.method_name == "Part-wise Template Matching":
+            self._create_partition_selection_controls(top_h)
+            
         
         main_layout.addLayout(top_h)
+        mid_h=QHBoxLayout()
+        mid_h.addStretch()
+        # Base length selection (for Part-wise Template Matching method)
+        if self.method_name == "Part-wise Template Matching":
+            self._create_base_length_selection_controls(mid_h)
+            main_layout.addLayout(mid_h)
         
+        # Thresh(%) selection (for DPTM method)
+        if self.method_name == "Dynamic Part-wise Template Matching":
+            self._create_threshold_controls(mid_h)  
+            main_layout.addLayout(mid_h) 
+             
         # Options and generation button
         opts_h = QHBoxLayout()
         
@@ -128,13 +148,9 @@ class AnalysisWindow(QMainWindow):
         
         opts_h.addStretch()
         
-        # Threshold selection (for DPTM method)
-        if self.method_name == "Dynamic Part-wise Template Matching":
-            self._create_threshold_controls(opts_h)
         
-        # Similarity threshold selection (for Template Matching method)
-        if self.method_name == "Template Matching":
-            self._create_similarity_threshold_controls(opts_h)
+        # Method selection (for all method)
+        self._create_construction_method_selection_controls(opts_h)
         
         main_layout.addLayout(opts_h)
     
@@ -164,30 +180,18 @@ class AnalysisWindow(QMainWindow):
     def _create_k_selection_controls(self, layout: QHBoxLayout):
         """Create k-length selection controls"""
         select_h = QHBoxLayout()
-        
-        select_lbl = QLabel("Select k : ")
-        select_lbl.setStyleSheet("border:none; background-color:transparent")
+        select_lbl=QLabel("Select k : ")
+        select_lbl.setStyleSheet("border:none;""background-color:transparent")
         select_h.addWidget(select_lbl)
-        
-        self.rb_k_default = QRadioButton("Default")
-        self.rb_k_default.setChecked(True)
-        self.rb_k_custom = QRadioButton("Custom")
-        
+        self.rb_custom = QRadioButton("Custom")
         self.spin_k = QSpinBox()
         self.spin_k.setRange(*app_config.analysis.k_length_range)
         self.spin_k.setValue(app_config.analysis.default_k_length)
         self.spin_k.setEnabled(False)
-        
-        self.rb_k_default.toggled.connect(
-            lambda checked: self.spin_k.setEnabled(not checked)
-        )
-        
-        self.button_k = QButtonGroup(self)
-        self.button_k.addButton(self.rb_k_custom)
-        self.button_k.addButton(self.rb_k_default)
-        
-        select_h.addWidget(self.rb_k_default)
-        select_h.addWidget(self.rb_k_custom)
+        self.rb_custom.toggled.connect(lambda checked: self.spin_k.setEnabled(checked))
+        self.button_k=QButtonGroup(self)
+        self.button_k.addButton(self.rb_custom)
+        select_h.addWidget(self.rb_custom)
         select_h.addWidget(self.spin_k)
         select_h.addStretch()
         
@@ -195,91 +199,77 @@ class AnalysisWindow(QMainWindow):
     
     def _create_threshold_controls(self, layout: QHBoxLayout):
         """Create threshold selection controls"""
-        opts_lbl = QLabel("Select Thresh percent (%) : ")
-        opts_lbl.setStyleSheet("border:none; background-color:transparent")
-        layout.addWidget(opts_lbl)
+        opts_h = QHBoxLayout()
+        opts_lbl=QLabel("Select Thresh percent (%) : ")
+        opts_lbl.setStyleSheet("border:none;""background-color:transparent")
+        opts_h.addWidget(opts_lbl)
+        self.t_cm_custom = QRadioButton("Custom")
+        self.t_spin = QSpinBox()
         
-        self.rb_t_default = QRadioButton("Default")
-        self.rb_t_default.setChecked(True)
-        self.rb_t_custom = QRadioButton("Custom")
+        self.t_spin.setRange(*app_config.analysis.threshold_range)
+        self.t_spin.setValue(app_config.analysis.default_threshold)
+        self.t_spin.setEnabled(False)
+        self.t_cm_custom.toggled.connect(lambda checked: self.t_spin.setEnabled(checked))
+        self.button_t=QButtonGroup(self)
+        self.button_t.addButton(self.t_cm_custom)
+        opts_h.addWidget(self.t_cm_custom)
+        opts_h.addWidget(self.t_spin)
         
-        self.spin_t = QSpinBox()
-        self.spin_t.setRange(*app_config.analysis.threshold_range)
-        self.spin_t.setValue(app_config.analysis.default_threshold)
-        self.spin_t.setEnabled(False)
-        
-        self.rb_t_default.toggled.connect(
-            lambda checked: self.spin_t.setEnabled(not checked)
-        )
-        
-        self.button_t = QButtonGroup(self)
-        self.button_t.addButton(self.rb_t_default)
-        self.button_t.addButton(self.rb_t_custom)
-        
-        layout.addWidget(self.rb_t_default)
-        layout.addWidget(self.rb_t_custom)
-        layout.addWidget(self.spin_t)
+        layout.addLayout(opts_h)
     
-    def _create_template_selection_controls(self, layout: QHBoxLayout):
-        """Create template length selection controls for Template Matching"""
+    def _create_construction_method_selection_controls(self, layout: QHBoxLayout):
+        """Create method selection controls"""
+        opts_h = QHBoxLayout()
+        opts_lbl=QLabel("Select Method : ")
+        opts_lbl.setStyleSheet("border:none;""background-color:transparent")
+        opts_h.addWidget(opts_lbl)
+        self.t_df_upgma = QRadioButton("UPGMA")
+        self.t_df_upgma.setChecked(True)
+        self.t_cm_nj = QRadioButton("NJ")
+        self.button_t=QButtonGroup(self)
+        self.button_t.addButton( self.t_df_upgma)
+        self.button_t.addButton(self.t_cm_nj)
+        opts_h.addWidget(self.t_df_upgma)
+        opts_h.addWidget(self.t_cm_nj)
+        layout.addLayout(opts_h)
+        
+    def _create_partition_selection_controls(self, layout: QHBoxLayout):
+        """Create partition selection controls"""
         select_h = QHBoxLayout()
-        
-        select_lbl = QLabel("Template Length : ")
-        select_lbl.setStyleSheet("border:none; background-color:transparent")
+        select_lbl=QLabel("Select partition : ")
+        select_lbl.setStyleSheet("border:none;""background-color:transparent")
         select_h.addWidget(select_lbl)
-        
-        self.rb_template_default = QRadioButton("Default (20)")
-        self.rb_template_default.setChecked(True)
-        self.rb_template_custom = QRadioButton("Custom")
-        
-        self.spin_template = QSpinBox()
-        self.spin_template.setRange(5, 100)
-        self.spin_template.setValue(20)
-        self.spin_template.setEnabled(False)
-        
-        self.rb_template_default.toggled.connect(
-            lambda checked: self.spin_template.setEnabled(not checked)
-        )
-        
-        self.button_template = QButtonGroup(self)
-        self.button_template.addButton(self.rb_template_custom)
-        self.button_template.addButton(self.rb_template_default)
-        
-        select_h.addWidget(self.rb_template_default)
-        select_h.addWidget(self.rb_template_custom)
-        select_h.addWidget(self.spin_template)
+        self.p_custom = QRadioButton("Custom")
+        self.spin_p = QSpinBox()
+        self.spin_p.setRange(*app_config.analysis.partition_length_range)
+        self.spin_p.setValue(app_config.analysis.default_partition_length)
+        self.spin_p.setEnabled(False)
+        self.p_custom.toggled.connect(lambda checked: self.spin_p.setEnabled(checked))
+        self.button_p=QButtonGroup(self)
+        self.button_p.addButton(self.p_custom)
+        select_h.addWidget(self.p_custom)
+        select_h.addWidget(self.spin_p)
         select_h.addStretch()
-        
         layout.addLayout(select_h)
-    
-    def _create_similarity_threshold_controls(self, layout: QHBoxLayout):
-        """Create similarity threshold selection controls for Template Matching"""
-        opts_lbl = QLabel("Similarity Threshold : ")
-        opts_lbl.setStyleSheet("border:none; background-color:transparent")
-        layout.addWidget(opts_lbl)
+    def _create_base_length_selection_controls(self, layout: QHBoxLayout):
+        """Create base length selection controls"""
+        select_b = QHBoxLayout()
+        select_b.addStretch()
+        select_b_lbl=QLabel("Select base length : ")
+        select_b_lbl.setStyleSheet("border:none;""background-color:transparent")
+        select_b.addWidget(select_b_lbl)
+        self.b_custom = QRadioButton("Custom")
+        self.spin_b = QSpinBox()
+        self.spin_b.setRange(*app_config.analysis.base_length_range)
+        self.spin_b.setValue(app_config.analysis.default_base_length)
+        self.spin_b.setEnabled(False)
+        self.b_custom.toggled.connect(lambda checked: self.spin_b.setEnabled(checked))
+        self.button_b=QButtonGroup(self)
+        self.button_b.addButton(self.b_custom)
+        select_b.addWidget(self.b_custom)
+        select_b.addWidget(self.spin_b)
         
-        self.rb_sim_default = QRadioButton("Default (0.75)")
-        self.rb_sim_default.setChecked(True)
-        self.rb_sim_custom = QRadioButton("Custom")
-        
-        self.spin_sim = QSpinBox()
-        self.spin_sim.setRange(50, 100)
-        self.spin_sim.setValue(75)
-        self.spin_sim.setSuffix("%")
-        self.spin_sim.setEnabled(False)
-        
-        self.rb_sim_default.toggled.connect(
-            lambda checked: self.spin_sim.setEnabled(not checked)
-        )
-        
-        self.button_sim = QButtonGroup(self)
-        self.button_sim.addButton(self.rb_sim_default)
-        self.button_sim.addButton(self.rb_sim_custom)
-        
-        layout.addWidget(self.rb_sim_default)
-        layout.addWidget(self.rb_sim_custom)
-        layout.addWidget(self.spin_sim)
-    
+        layout.addLayout(select_b)
     def _create_tree_display(self, main_layout: QVBoxLayout):
         """Create tree display area"""
         tree_frame = QFrame()
@@ -305,15 +295,25 @@ class AnalysisWindow(QMainWindow):
     
     def _create_newick_display(self, main_layout: QVBoxLayout):
         """Create Newick tree display area (placeholder)"""
-        newick_frame = QFrame()
-        newick_frame.setFrameShape(QFrame.Shape.Box)
-        ntf_l = QVBoxLayout(newick_frame)
+        newick_tree_frame = QFrame()
+        newick_tree_frame.setFrameShape(QFrame.Shape.Box)
+        ntf_l = QVBoxLayout(newick_tree_frame)
+        self.n_lbl = QLabel("Newick Tree")
+        screen = QGuiApplication.primaryScreen()
+        geometry = screen.geometry()
+        screen_width = geometry.width()
+        self.n_lbl.setMaximumWidth(screen_width)  
+        self.n_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        ntf_l.addWidget(self.n_lbl)
+        main_layout.addWidget(newick_tree_frame, stretch=1)
+        #download newic tree
+        bottom_h3 = QHBoxLayout()
+        bottom_h3.addStretch(1)
+        self.download_newic=QPushButton("Download")
+        self.download_newic.clicked.connect(self._save_newic)
+        bottom_h3.addWidget(self.download_newic)
         
-        n_lbl = QLabel("Newick Tree")
-        n_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        ntf_l.addWidget(n_lbl)
-        
-        main_layout.addWidget(newick_frame, stretch=1)
+        main_layout.addLayout(bottom_h3)
     
     def _load_method_config(self):
         """Load configuration for the current method"""
@@ -372,26 +372,60 @@ class AnalysisWindow(QMainWindow):
         if self.method_name == "Dynamic Part-wise Template Matching":
             # Update DPTM-specific parameters
             base_config.parameters['k_length'] = (
-                app_config.analysis.default_k_length 
-                if self.rb_k_default.isChecked() 
-                else self.spin_k.value()
+                self.spin_k.value() 
+                if self.rb_custom.isChecked() 
+                else app_config.analysis.default_k_length 
             )
             base_config.parameters['threshold_percent'] = (
-                app_config.analysis.default_threshold 
-                if self.rb_t_default.isChecked() 
-                else self.spin_t.value()
+                self.t_spin.value()
+                if self.t_cm_custom.isChecked() 
+                else app_config.analysis.default_threshold
+            )
+            base_config.parameters['construction_method'] = (
+                "nj"
+                if self.t_cm_nj.isChecked() 
+                else "upgma"
             )
         elif self.method_name == "Template Matching":
-            # Update Template Matching-specific parameters
-            base_config.parameters['template_length'] = (
-                20 
-                if self.rb_template_default.isChecked() 
-                else self.spin_template.value()
+            # Update TM-specific parameters
+            base_config.parameters['partition'] = (
+                self.spin_p.value()
+                if self.p_custom.isChecked() 
+                else app_config.analysis.default_partition_length
             )
-            base_config.parameters['similarity_threshold'] = (
-                0.75 
-                if self.rb_sim_default.isChecked() 
-                else self.spin_sim.value() / 100.0
+            base_config.parameters['construction_method'] = (
+                "nj"
+                if self.t_cm_nj.isChecked() 
+                else "upgma"
+            )
+        elif self.method_name == "Chaos Game Frequency Representation":
+            # Update CGR-specific parameters
+            base_config.parameters['k_length'] = (
+                self.spin_k.value() 
+                if self.rb_custom.isChecked() 
+                else app_config.analysis.default_k_length 
+            )
+            base_config.parameters['construction_method'] = (
+                "nj"
+                if self.t_cm_nj.isChecked() 
+                else "upgma"
+            )
+        elif self.method_name == "Part-wise Template Matching":
+            # Update PTM-specific parameters
+            base_config.parameters['base_length'] = (
+                self.spin_b.value() 
+                if self.b_custom.isChecked() 
+                else app_config.analysis.default_base_length 
+            )
+            base_config.parameters['partition'] = (
+                self.spin_p.value()
+                if self.p_custom.isChecked() 
+                else app_config.analysis.default_partition_length
+            )
+            base_config.parameters['construction_method'] = (
+                "nj"
+                if self.t_cm_nj.isChecked() 
+                else "upgma"
             )
         
         return base_config
@@ -430,7 +464,8 @@ class AnalysisWindow(QMainWindow):
         try:
             result, image_path = result_data
             self.current_result = result
-            
+            self.newick=result.newick
+            self.n_lbl.setText(self.newick)
             # Display the tree image
             lbl_pix = QPixmap(image_path)
             self.tree_pixmap = lbl_pix  # Store original for saving
@@ -489,9 +524,45 @@ class AnalysisWindow(QMainWindow):
                 self, "Error", 
                 f"Error saving image: {str(e)}"
             )
-    
+    def _save_newic(self):
+        """Save the newic"""
+        if not hasattr(self, 'newic'):
+            QMessageBox.critical(
+                self, "Error", 
+                "Generate Tree first"
+            )
+            return
+        try:
+            save_path, _ = QFileDialog.getSaveFileName(
+                self, "Save Text","","Text Files (*.txt);;All Files (*)"
+                )
+            if save_path:
+                with open(save_path, "w", encoding="utf-8") as f:
+                    f.write(self.newic)
+                QMessageBox.information(
+                    self, "Success", 
+                    f"Newic tree saved to: {save_path}"
+                )
+        except Exception as e:
+            QMessageBox.critical(
+                self, "Error", 
+                f"Error saving Newic tree: {str(e)}"
+            )
+    def _clear_ui(self):
+        """Remove all widgets/layouts from the central widget."""
+        central = self.centralWidget()
+        if central is not None:
+            # Delete children safely
+            for child in central.children():
+                child.deleteLater()
+            central.setParent(None)
     def set_method(self, method_name: str):
         """Set the analysis method"""
         self.method_name = method_name
         self.setWindowTitle(f"BAU Similarity - {method_name}")
+        # Clear existing UI
+        self._clear_ui()
+    
+        # Rebuild UI for the new method
+        self._setup_ui()
         self._load_method_config()

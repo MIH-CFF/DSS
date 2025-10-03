@@ -2,13 +2,12 @@
 Plugin initialization and registration.
 """
 from .dptm_plugin import DPTMProcessor
-from .template_matching_plugin import TemplateMatchingProcessor
-from .chaos_game_plugin import ChaosGameFrequencyProcessor
-from .partwise_template_matching_plugin import PartWiseTemplateMatchingProcessor
-
+from .cgr_plugin import CGRProcessor
+from .tm_plugin import TMProcessor
+from .ptm_plugin import PTMProcessor
 __all__ = [
-    'DPTMProcessor', 
-    'TemplateMatchingProcessor',
-    'ChaosGameFrequencyProcessor',
-    'PartWiseTemplateMatchingProcessor'
+    'DPTMProcessor',
+    'CGRProcessor',
+    'TMProcessor',
+    'PTMProcessor'
 ]

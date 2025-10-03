@@ -24,6 +24,7 @@ class AnalysisResult:
     distance_matrix: np.ndarray
     sequence_names: List[str]
     metadata: Dict[str, Any]
+    newick:str
 
 
 @dataclass

@@ -5,7 +5,7 @@ import numpy as np
 from typing import List, Dict, Any
 from sklearn.metrics.pairwise import pairwise_distances
 from Bio.Phylo.TreeConstruction import DistanceMatrix, DistanceTreeConstructor
-from Bio import SeqIO
+from Bio import Phylo
 from io import StringIO
 
 from src.core.interfaces import (
@@ -21,7 +21,7 @@ class CGRProcessor(ISequenceProcessor):
     
     def get_method_name(self) -> str:
         """Return the name of the processing method"""
-        return "Chaos Game Representation (CGR)"
+        return "Chaos Game Frequency Representation"
     
     def get_description(self) -> str:
         """Return a description of the method"""
@@ -52,7 +52,7 @@ class CGRProcessor(ISequenceProcessor):
             return False
         
         # Validate tree method
-        tree_method = params.get('tree_method', 'nj').lower()
+        tree_method = params['construction_method'].lower()
         if tree_method not in ['nj', 'upgma']:
             return False
         
@@ -66,7 +66,7 @@ class CGRProcessor(ISequenceProcessor):
         
         params = config.parameters
         kmer_length = params['kmer_length']
-        tree_method = params.get('tree_method', 'nj').lower()
+        tree_method = params['construction_method'].lower()
         
         # Generate descriptors for all sequences
         descriptors = []
@@ -100,7 +100,10 @@ class CGRProcessor(ISequenceProcessor):
             tree = constructor.upgma(dm)
         else:
             tree = constructor.nj(dm)
-        
+        handle=StringIO()
+        Phylo.write(tree,handle,'newick')
+        newic=handle.getvalue()
+        handle.close()
         return AnalysisResult(
             tree=tree,
             distance_matrix=distances,
@@ -110,7 +113,8 @@ class CGRProcessor(ISequenceProcessor):
                 'config': config.parameters,
                 'kmer_length': kmer_length,
                 'tree_method': tree_method
-            }
+            },
+            newick=newic
         )
     
     def _cgr_k_mer(self, sequence: str) -> tuple:

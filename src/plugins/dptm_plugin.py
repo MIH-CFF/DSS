@@ -6,7 +6,8 @@ from typing import List, Dict, Any
 from sklearn.metrics.pairwise import pairwise_distances
 from Bio.Phylo.TreeConstruction import DistanceMatrix, DistanceTreeConstructor
 from Bio.Seq import Seq
-
+from Bio import Phylo
+from io import StringIO
 from src.core.interfaces import (
     ISequenceProcessor, SequenceData, AnalysisResult, MethodConfig
 )
@@ -72,6 +73,7 @@ class DPTMProcessor(ISequenceProcessor):
         k_length = params['k_length']
         threshold_percent = params['threshold_percent']
         part_length = params['part_length']
+        construction_method=params['construction_method']
         hist_reduction_rate = params.get('histogram_reduction_rate', 1)
         
         # Generate ideal sequence template
@@ -109,8 +111,15 @@ class DPTMProcessor(ISequenceProcessor):
         
         # Construct phylogenetic tree
         constructor = DistanceTreeConstructor()
+        if construction_method.lower() == 'upgma':
+            tree = constructor.upgma(dist_matrix)
+        elif construction_method.lower() == 'nj':
+            tree = constructor.nj(dist_matrix)
         tree = constructor.nj(dist_matrix)
-        
+        handle=StringIO()
+        Phylo.write(tree,handle,'newick')
+        newic=handle.getvalue()
+        handle.close()
         return AnalysisResult(
             tree=tree,
             distance_matrix=distances,
@@ -120,7 +129,8 @@ class DPTMProcessor(ISequenceProcessor):
                 'config': config.parameters,
                 'ideal_sequence': ideal_sequence,
                 'feature_size': feature_size
-            }
+            },
+            newick=newic
         )
     
     def _generate_template(self, k: int) -> str:

@@ -41,8 +41,13 @@ class AnalysisConfig:
     """Analysis configuration defaults"""
     default_k_length: int = 4
     default_threshold: int = 50
+    default_partition_length: int = 1
+    default_base_length: int = 4
     k_length_range: tuple = (1, 10)
     threshold_range: tuple = (0, 100)
+    partition_length_range: tuple = (0, 10)
+    base_length_range: tuple = (0, 10)
+    
 
 
 class AppConfig:

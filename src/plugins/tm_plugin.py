@@ -5,13 +5,14 @@ import numpy as np
 from typing import List, Dict, Any
 from sklearn.metrics.pairwise import pairwise_distances
 from Bio.Phylo.TreeConstruction import DistanceMatrix, DistanceTreeConstructor
-
+from Bio import Phylo
+from io import StringIO
 from src.core.interfaces import (
     ISequenceProcessor, SequenceData, AnalysisResult, MethodConfig
 )
 
 
-class TemplateMatchingV2Processor(ISequenceProcessor):
+class TMProcessor(ISequenceProcessor):
     """Template Matching V2 processor plugin"""
     
     def __init__(self):
@@ -19,7 +20,7 @@ class TemplateMatchingV2Processor(ISequenceProcessor):
     
     def get_method_name(self) -> str:
         """Return the name of the processing method"""
-        return "Template Matching V2"
+        return "Template Matching"
     
     def get_description(self) -> str:
         """Return a description of the method"""
@@ -32,8 +33,7 @@ class TemplateMatchingV2Processor(ISequenceProcessor):
             name=self.get_method_name(),
             parameters={
                 'partition': 10,
-                'ideal_sequence_length': 8,
-                'tree_method': 'nj'  # nj or upgma
+                'construction_method': 'nj'  # nj or upgma
             },
             description=self.get_description()
         )
@@ -43,20 +43,17 @@ class TemplateMatchingV2Processor(ISequenceProcessor):
         params = config.parameters
         
         # Check required parameters
-        required_params = ['partition', 'ideal_sequence_length']
+        required_params = ['partition']
         for param in required_params:
             if param not in params:
                 return False
         
         # Validate parameter ranges
-        if not (1 <= params['partition'] <= 50):
-            return False
-        
-        if not (2 <= params['ideal_sequence_length'] <= 20):
+        if not (1 <= params['partition'] <= 10):
             return False
         
         # Validate tree method
-        tree_method = params.get('tree_method', 'nj').lower()
+        tree_method = params['construction_method'].lower()
         if tree_method not in ['nj', 'upgma']:
             return False
         
@@ -70,8 +67,8 @@ class TemplateMatchingV2Processor(ISequenceProcessor):
         
         params = config.parameters
         partition = params['partition']
-        ideal_seq_length = params['ideal_sequence_length']
-        tree_method = params.get('tree_method', 'nj').lower()
+        ideal_seq_length = 12
+        tree_method = params['construction_method'].lower()
         
         # Generate ideal sequence template
         ideal_sequence = self._generate_ideal_sequence(ideal_seq_length)
@@ -107,7 +104,10 @@ class TemplateMatchingV2Processor(ISequenceProcessor):
             tree = constructor.upgma(dm)
         else:
             tree = constructor.nj(dm)
-        
+        handle=StringIO()
+        Phylo.write(tree,handle,'newick')
+        newic=handle.getvalue()
+        handle.close()
         return AnalysisResult(
             tree=tree,
             distance_matrix=distances,
@@ -117,7 +117,8 @@ class TemplateMatchingV2Processor(ISequenceProcessor):
                 'config': config.parameters,
                 'ideal_sequence': ideal_sequence,
                 'partition': partition
-            }
+            },
+            newick=newic
         )
     
     def _complement(self, base: str) -> str:
