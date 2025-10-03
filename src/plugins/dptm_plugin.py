@@ -46,7 +46,7 @@ class DPTMProcessor(ISequenceProcessor):
         params = config.parameters
         
         # Check required parameters
-        required_params = ['k_length', 'threshold_percent', 'part_length']
+        required_params = ['k_length', 'threshold_percent']
         for param in required_params:
             if param not in params:
                 return False
@@ -58,8 +58,6 @@ class DPTMProcessor(ISequenceProcessor):
         if not (0 <= params['threshold_percent'] <= 100):
             return False
         
-        if not (1 <= params['part_length'] <= 50):
-            return False
         
         return True
     
