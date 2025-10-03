@@ -29,37 +29,20 @@ class PluginLoader:
         except ImportError as e:
             print(f"Failed to load DPTM plugin: {e}")
         
-        try:
-            from src.plugins.template_matching_plugin import TemplateMatchingProcessor
-            from src.plugins.chaos_game_plugin import ChaosGameFrequencyProcessor
-            from src.plugins.partwise_template_matching_plugin import PartWiseTemplateMatchingProcessor
-            
-            plugin_registry.register_processor(ChaosGameFrequencyProcessor())
-            plugin_registry.register_processor(TemplateMatchingProcessor())
-            plugin_registry.register_processor(PartWiseTemplateMatchingProcessor())
-            
-            self.loaded_plugins.update([
-                "ChaosGameFrequencyProcessor",
-                "TemplateMatchingProcessor", 
-                "PartWiseTemplateMatchingProcessor"
-            ])
-        except ImportError as e:
-            print(f"Failed to load stub plugins: {e}")
-        
         # Load new enhanced plugins
         try:
             from src.plugins.cgr_plugin import CGRProcessor
-            from src.plugins.template_matching_v2_plugin import TemplateMatchingV2Processor
-            from src.plugins.partwise_template_matching_v2_plugin import PartWiseTemplateMatchingV2Processor
+            from src.plugins.tm_plugin import TMProcessor
+            from src.plugins.ptm_plugin import PTMProcessor
             
             plugin_registry.register_processor(CGRProcessor())
-            plugin_registry.register_processor(TemplateMatchingV2Processor())
-            plugin_registry.register_processor(PartWiseTemplateMatchingV2Processor())
+            plugin_registry.register_processor(TMProcessor())
+            plugin_registry.register_processor(PTMProcessor())
             
             self.loaded_plugins.update([
                 "CGRProcessor",
-                "TemplateMatchingV2Processor", 
-                "PartWiseTemplateMatchingV2Processor"
+                "TMProcessor", 
+                "PTMProcessor"
             ])
         except ImportError as e:
             print(f"Failed to load enhanced plugins: {e}")

@@ -233,7 +233,7 @@ def create_application() -> QApplication:
             app.setStyleSheet(file.read())
     
     return app
-
+ 
 
 def main():
     """Main application entry point"""

@@ -5,13 +5,14 @@ import numpy as np
 from typing import List, Dict, Any
 from sklearn.metrics.pairwise import pairwise_distances
 from Bio.Phylo.TreeConstruction import DistanceMatrix, DistanceTreeConstructor
-
+from Bio import Phylo
+from io import StringIO
 from src.core.interfaces import (
     ISequenceProcessor, SequenceData, AnalysisResult, MethodConfig
 )
 
 
-class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
+class PTMProcessor(ISequenceProcessor):
     """Part-wise Template Matching V2 processor plugin"""
     
     def __init__(self):
@@ -19,7 +20,7 @@ class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
     
     def get_method_name(self) -> str:
         """Return the name of the processing method"""
-        return "Part-wise Template Matching V2"
+        return "Part-wise Template Matching"
     
     def get_description(self) -> str:
         """Return a description of the method"""
@@ -33,8 +34,8 @@ class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
             parameters={
                 'partition': 10,
                 'base_length': 4,
-                'similarity_method': 'four_base',  # 'three_base', 'four_base', 'four_base_comp'
-                'tree_method': 'nj'  # nj or upgma
+                'similarity_method': 'three_base',  # 'three_base', 'four_base', 'four_base_comp'
+                'construction_method': 'nj'  # nj or upgma
             },
             description=self.get_description()
         )
@@ -44,25 +45,20 @@ class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
         params = config.parameters
         
         # Check required parameters
-        required_params = ['partition', 'base_length', 'similarity_method']
+        required_params = ['partition', 'base_length', 'construction_method']
         for param in required_params:
             if param not in params:
                 return False
         
         # Validate parameter ranges
-        if not (1 <= params['partition'] <= 50):
+        if not (1 <= params['partition'] <= 100):
             return False
         
-        if not (3 <= params['base_length'] <= 10):
-            return False
-        
-        # Validate similarity method
-        similarity_method = params.get('similarity_method', 'four_base')
-        if similarity_method not in ['three_base', 'four_base', 'four_base_comp']:
+        if not (1 <= params['base_length'] <= 10):
             return False
         
         # Validate tree method
-        tree_method = params.get('tree_method', 'nj').lower()
+        tree_method =params['construction_method'].lower()
         if tree_method not in ['nj', 'upgma']:
             return False
         
@@ -77,8 +73,8 @@ class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
         params = config.parameters
         partition = params['partition']
         base_length = params['base_length']
-        similarity_method = params['similarity_method']
-        tree_method = params.get('tree_method', 'nj').lower()
+        similarity_method = 'three_base'
+        tree_method = params['construction_method'].lower()
         
         # Generate ideal sequence template
         ideal_sequence = self._generate_ideal_sequence(base_length)
@@ -93,10 +89,10 @@ class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
             # Calculate sequence features using selected method
             if similarity_method == 'three_base':
                 features = self._three_base_seq_diff(seq_data.sequence, ideal_sequence, partition, base_length)
-            elif similarity_method == 'four_base':
-                features = self._four_base_seq_diff(seq_data.sequence, ideal_sequence, partition, base_length)
-            else:  # four_base_comp
-                features = self._four_base_comp_seq_diff(seq_data.sequence, ideal_sequence, partition, base_length)
+            # elif similarity_method == 'four_base':
+            #     features = self._four_base_seq_diff(seq_data.sequence, ideal_sequence, partition, base_length)
+            # else:  # four_base_comp
+            #     features = self._four_base_comp_seq_diff(seq_data.sequence, ideal_sequence, partition, base_length)
             
             descriptors.append(features)
         
@@ -120,7 +116,10 @@ class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
             tree = constructor.upgma(dm)
         else:
             tree = constructor.nj(dm)
-        
+        handle=StringIO()
+        Phylo.write(tree,handle,'newick')
+        newic=handle.getvalue()
+        handle.close()
         return AnalysisResult(
             tree=tree,
             distance_matrix=distances,
@@ -130,7 +129,8 @@ class PartWiseTemplateMatchingV2Processor(ISequenceProcessor):
                 'config': config.parameters,
                 'ideal_sequence': ideal_sequence,
                 'similarity_method': similarity_method
-            }
+            },
+            newick=newic
         )
     
     def _complement(self, base: str) -> str:

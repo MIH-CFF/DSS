@@ -78,7 +78,7 @@ class AnalysisService:
             # Run analysis
             result = processor.process_sequences(sequences, config)
             self._current_result = result
-            
+
             if progress_callback:
                 progress_callback.set_status("Analysis completed")
                 progress_callback.update_progress(1.0)
