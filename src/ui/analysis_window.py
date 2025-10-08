@@ -526,7 +526,7 @@ class AnalysisWindow(QMainWindow):
             )
     def _save_newic(self):
         """Save the newic"""
-        if not hasattr(self, 'newic'):
+        if not hasattr(self, 'newick'):
             QMessageBox.critical(
                 self, "Error", 
                 "Generate Tree first"
