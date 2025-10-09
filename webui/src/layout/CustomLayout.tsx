@@ -75,7 +75,7 @@ const CustomFooterMenu = ({ collapsed }: ICustomFooterMenuProps) => {
             <CopyOutlined onClick={() => copyLink()} />
           </div>
           <div>
-            &copy; {new Date().getFullYear()} - Maifee Ul Asad
+            &copy; {new Date().getFullYear()} - DSS
           </div>
         </div>
       </div>
@@ -191,7 +191,7 @@ const CustomLayout = ({ children }: ICustomLayoutProps) => {
   return (
     <ProLayout
       logo={logo}
-      title="React Pipeline"
+      title="DSS"
       style={{ minHeight: '100vh' }}
       fixSiderbar
       location={location}
