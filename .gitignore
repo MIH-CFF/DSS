@@ -5,3 +5,7 @@ __pycache__/
 
 webui/node_modules/
 webui/dist/
+
+Datasets/*.zip
+Datasets/*.tar.gz
+Datasets/*.tgz
