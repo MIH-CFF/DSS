@@ -34,7 +34,7 @@ class CGRProcessor(ISequenceProcessor):
             name=self.get_method_name(),
             parameters={
                 'kmer_length': 4,
-                'tree_method': 'nj'  # nj or upgma
+                'construction_method': 'nj'
             },
             description=self.get_description()
         )

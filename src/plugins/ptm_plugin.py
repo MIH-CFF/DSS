@@ -34,8 +34,8 @@ class PTMProcessor(ISequenceProcessor):
             parameters={
                 'partition': 10,
                 'base_length': 4,
-                'similarity_method': 'three_base',  # 'three_base', 'four_base', 'four_base_comp'
-                'construction_method': 'nj'  # nj or upgma
+                'method_type': 'four_base_comp',
+                'construction_method': 'nj'
             },
             description=self.get_description()
         )

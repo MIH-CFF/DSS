@@ -36,7 +36,8 @@ class DPTMProcessor(ISequenceProcessor):
                 'k_length': 4,
                 'threshold_percent': 50,
                 'part_length': 10,
-                'histogram_reduction_rate': 1
+                'histogram_reduction_rate': 1,
+                'construction_method': 'nj'
             },
             description=self.get_description()
         )
