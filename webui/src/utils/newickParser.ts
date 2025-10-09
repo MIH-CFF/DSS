@@ -123,3 +123,57 @@ export function convertToG6Format(tree: PhylogeneticNode): G6TreeData {
 
   return convert(tree);
 }
+
+/**
+ * Generate sample tree data for testing
+ */
+export function generateSampleTreeData(): G6TreeData {
+  return {
+    id: 'root',
+    label: 'Root',
+    children: [
+      {
+        id: 'seq1',
+        label: 'Sequence 1',
+      },
+      {
+        id: 'branch1',
+        label: 'Branch 1',
+        children: [
+          {
+            id: 'seq2',
+            label: 'Sequence 2',
+          },
+          {
+            id: 'seq3',
+            label: 'Sequence 3',
+          },
+        ],
+      },
+      {
+        id: 'branch2',
+        label: 'Branch 2',
+        children: [
+          {
+            id: 'seq4',
+            label: 'Sequence 4',
+          },
+          {
+            id: 'branch3',
+            label: 'Branch 3',
+            children: [
+              {
+                id: 'seq5',
+                label: 'Sequence 5',
+              },
+              {
+                id: 'seq6',
+                label: 'Sequence 6',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+}
