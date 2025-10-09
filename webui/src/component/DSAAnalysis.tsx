@@ -18,6 +18,7 @@ import {
 import { InboxOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile } from 'antd';
 import { dssApi, MethodInfo, SequenceData, AnalysisResponse } from '../services/dssApi';
+import PhylogeneticTree from '../components/PhylogeneticTree';
 
 const { Title, Text, Paragraph } = Typography;
 const { Dragger } = Upload;
@@ -258,6 +259,21 @@ export const DSAAnalysis: React.FC = () => {
                 type="success"
                 showIcon
               />
+              
+              {/* Phylogenetic Tree Visualization */}
+              {results.tree_newick && (
+                <PhylogeneticTree
+                  data={results.tree_newick}
+                  width={800}
+                  height={500}
+                  showControls={true}
+                  direction="LR"
+                  onNodeClick={(node) => {
+                    console.log('Node clicked:', node);
+                    message.info(`Selected: ${node.label || node.id}`);
+                  }}
+                />
+              )}
               
               <Collapse>
                 <Panel header="Phylogenetic Tree (Newick Format)" key="tree">
