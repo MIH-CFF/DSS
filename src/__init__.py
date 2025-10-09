@@ -26,6 +26,9 @@ from src.plugins import (
 # Adapters
 from src.adapters import BioPythonSequenceLoader, MatplotlibTreeVisualizer
 
+# API components
+from src.api import create_app
+
 # Utilities
 from src.utils import app_config, resource_path
 
@@ -43,11 +46,13 @@ __all__ = [
     'MainWindow', 'AnalysisWindow', 'create_application', 'main',
     
     # Plugins
-    'DPTMProcessor', 'CGRProcessor',
-    'TMProcessor', 'PTMProcessor',
+    'DPTMProcessor', 'CGRProcessor', 'TMProcessor', 'PTMProcessor',
     
     # Adapters
     'BioPythonSequenceLoader', 'MatplotlibTreeVisualizer',
+    
+    # API
+    'create_app',
     
     # Utils
     'app_config', 'resource_path'
