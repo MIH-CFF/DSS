@@ -127,7 +127,11 @@ class DPTMProcessor(ISequenceProcessor):
                 'method': self.get_method_name(),
                 'config': config.parameters,
                 'ideal_sequence': ideal_sequence,
-                'feature_size': feature_size
+                'feature_size': feature_size,
+                'feature_dimension': descriptor.shape[1] if len(descriptor.shape) > 1 else descriptor.shape[0],
+                'num_sequences': len(sequences),
+                'k_length': k_length,
+                'part_length': part_length
             },
             newick=newic
         )
