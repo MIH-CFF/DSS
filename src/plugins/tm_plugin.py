@@ -116,7 +116,9 @@ class TMProcessor(ISequenceProcessor):
                 'method': self.get_method_name(),
                 'config': config.parameters,
                 'ideal_sequence': ideal_sequence,
-                'partition': partition
+                'partition': partition,
+                'feature_dimension': descriptors.shape[1] if len(descriptors.shape) > 1 else descriptors.shape[0],
+                'num_sequences': len(sequences)
             },
             newick=newic
         )
