@@ -128,7 +128,11 @@ class PTMProcessor(ISequenceProcessor):
                 'method': self.get_method_name(),
                 'config': config.parameters,
                 'ideal_sequence': ideal_sequence,
-                'similarity_method': similarity_method
+                'similarity_method': similarity_method,
+                'feature_dimension': descriptors.shape[1] if len(descriptors.shape) > 1 else descriptors.shape[0],
+                'num_sequences': len(sequences),
+                'partition': partition,
+                'base_length': base_length
             },
             newick=newic
         )
