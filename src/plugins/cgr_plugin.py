@@ -112,7 +112,10 @@ class CGRProcessor(ISequenceProcessor):
                 'method': self.get_method_name(),
                 'config': config.parameters,
                 'kmer_length': kmer_length,
-                'tree_method': tree_method
+                'tree_method': tree_method,
+                'feature_dimension': descriptors.shape[1] if len(descriptors.shape) > 1 else descriptors.shape[0],
+                'num_sequences': len(sequences),
+                'cgr_resolution': 2**kmer_length
             },
             newick=newic
         )
