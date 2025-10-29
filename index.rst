@@ -3,15 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-DSS documentation
-=================
+DNA Sequence Similarities (DSS) Documentation
+==============================================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
-
+Welcome to the DSS documentation. This project provides tools for DNA sequence analysis
+and similarity comparisons using various alignment and visualization methods.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   
+   modules/adapters
+   modules/api
+   modules/core
+   modules/plugins
+   modules/ui
+   modules/utils
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
