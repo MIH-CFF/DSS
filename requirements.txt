@@ -12,7 +12,7 @@ fastapi==0.104.1
 uvicorn==0.24.0
 python-multipart==0.0.6
 python-jose==3.3.0
-Sphinx==8.2.3
+Sphinx==8.1.3
 sphinx-autodoc-typehints==3.5.2
 graphviz==0.21
 pylint==4.0.2
