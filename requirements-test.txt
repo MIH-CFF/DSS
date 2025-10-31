@@ -1,0 +1,39 @@
+# Testing Requirements for DSS Desktop Application
+# Install with: pip install -r requirements-test.txt
+
+# Core testing framework
+pytest>=7.4.3
+pytest-qt>=4.2.0  # PyQt testing support
+pytest-cov>=4.1.0  # Coverage reporting
+pytest-benchmark>=4.0.0  # Performance benchmarking
+pytest-timeout>=2.2.0  # Test timeout management
+pytest-xdist>=3.5.0  # Parallel test execution
+
+# Memory and resource testing
+psutil>=5.9.6  # System and process utilities
+memory-profiler>=0.61.0  # Memory profiling
+objgraph>=3.6.0  # Object reference graphs
+
+# Mock and fixtures
+pytest-mock>=3.12.0  # Enhanced mocking
+faker>=20.1.0  # Test data generation
+
+# Code quality
+pytest-flake8>=1.1.1  # Style checking
+pytest-mypy>=0.10.3  # Type checking
+pytest-pylint>=0.21.0  # Linting
+
+# Reporting
+pytest-html>=4.1.1  # HTML test reports
+pytest-json-report>=1.5.0  # JSON test reports
+allure-pytest>=2.13.2  # Allure reporting
+
+# Debugging
+pytest-pdb>=0.3.1  # PDB integration
+pytest-sugar>=0.9.7  # Better test output
+
+# Already in main requirements but listed for clarity
+PyQt6>=6.9.1
+biopython>=1.84
+numpy>=1.26.4
+matplotlib>=3.9.2
