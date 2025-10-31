@@ -29,6 +29,7 @@ class AnalysisWindow(QMainWindow):
         self.current_result: Optional[AnalysisResult] = None
         self.worker_thread: Optional[WorkerThread] = None
         self.progress_dialog: Optional[ProgressDialog] = None
+        self._pixmaps = []  # Track pixmaps for cleanup
         
         self._setup_ui()
         self._load_method_config()
@@ -65,6 +66,7 @@ class AnalysisWindow(QMainWindow):
             app_config.paths.bau_logo, 
             app_config.ui.logo_size
         )
+        self._pixmaps.append(bau_logo_pixmap)  # Track for cleanup
         bau_logo_label.setFixedSize(*app_config.ui.logo_size)
         bau_logo_label.setPixmap(bau_logo_pixmap.scaled(
             *app_config.ui.logo_size,
@@ -85,6 +87,7 @@ class AnalysisWindow(QMainWindow):
             app_config.paths.ict_logo, 
             app_config.ui.logo_size
         )
+        self._pixmaps.append(ict_logo_pixmap)  # Track for cleanup
         ict_logo_label.setFixedSize(*app_config.ui.logo_size)
         ict_logo_label.setPixmap(ict_logo_pixmap.scaled(
             *app_config.ui.logo_size,
@@ -469,6 +472,7 @@ class AnalysisWindow(QMainWindow):
             # Display the tree image
             lbl_pix = QPixmap(image_path)
             self.tree_pixmap = lbl_pix  # Store original for saving
+            self._pixmaps.append(lbl_pix)  # Track for cleanup
             
             # Scale for display
             scaled_pix = lbl_pix.scaled(
@@ -566,3 +570,48 @@ class AnalysisWindow(QMainWindow):
         # Rebuild UI for the new method
         self._setup_ui()
         self._load_method_config()
+    
+    def closeEvent(self, event):
+        """Handle window close event with proper cleanup"""
+        # Clean up worker thread
+        if self.worker_thread is not None:
+            if self.worker_thread.isRunning():
+                try:
+                    self.worker_thread.quit()
+                    self.worker_thread.wait(1000)  # Wait up to 1 second
+                except RuntimeError:
+                    pass
+            try:
+                self.worker_thread.cleanup()
+            except RuntimeError:
+                pass
+            self.worker_thread = None
+        
+        # Clean up progress dialog
+        if self.progress_dialog is not None:
+            try:
+                self.progress_dialog.close()
+                self.progress_dialog.deleteLater()
+            except RuntimeError:
+                pass
+            self.progress_dialog = None
+        
+        # Clean up pixmaps
+        for pixmap in self._pixmaps:
+            try:
+                if pixmap is not None and not pixmap.isNull():
+                    pixmap.detach()
+            except RuntimeError:
+                pass
+        self._pixmaps.clear()
+        
+        # Clear stored pixmap
+        if hasattr(self, 'tree_pixmap'):
+            self.tree_pixmap = None
+        
+        # Clean up analysis service reference
+        self.analysis_service = None
+        self.current_result = None
+        
+        # Accept the close event
+        event.accept()
