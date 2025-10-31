@@ -26,9 +26,23 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.analysis_service = AnalysisService()
         self.analysis_window: Optional[AnalysisWindow] = None
+        self._pixmaps = []  # Track pixmaps for cleanup
         self._setup_ui()
         self._register_plugins()
         self._load_methods()
+    
+    def __del__(self):
+        """Destructor to ensure cleanup"""
+        try:
+            # Break circular references
+            if hasattr(self, 'analysis_service'):
+                self.analysis_service = None
+            if hasattr(self, 'analysis_window'):
+                self.analysis_window = None
+            if hasattr(self, '_pixmaps'):
+                self._pixmaps = None
+        except:
+            pass  # Ignore errors during destruction
     
     def _setup_ui(self):
         """Setup the user interface"""
@@ -62,6 +76,7 @@ class MainWindow(QMainWindow):
             app_config.paths.bau_logo, 
             app_config.ui.logo_size
         )
+        self._pixmaps.append(bau_logo_pixmap)  # Track for cleanup
         bau_logo_label.setFixedSize(*app_config.ui.logo_size)
         bau_logo_label.setPixmap(bau_logo_pixmap.scaled(
             *app_config.ui.logo_size, 
@@ -83,6 +98,7 @@ class MainWindow(QMainWindow):
             app_config.paths.ict_logo, 
             app_config.ui.logo_size
         )
+        self._pixmaps.append(ict_logo_pixmap)  # Track for cleanup
         ict_logo_label.setFixedSize(*app_config.ui.logo_size)
         ict_logo_label.setPixmap(ict_logo_pixmap.scaled(
             *app_config.ui.logo_size, 
@@ -139,9 +155,9 @@ class MainWindow(QMainWindow):
         select_v.addWidget(self.method_combo)
         
         # Start button
-        method_btn = QPushButton("Start")
-        method_btn.clicked.connect(self._start_analysis)
-        select_v.addWidget(method_btn)
+        self.method_btn = QPushButton("Start")
+        self.method_btn.clicked.connect(self._start_analysis)
+        select_v.addWidget(self.method_btn)
         
         select_v.addStretch(0)
         
@@ -158,6 +174,7 @@ class MainWindow(QMainWindow):
             app_config.paths.tree_placeholder, 
             app_config.ui.tree_display_size
         )
+        self._pixmaps.append(view_pix)  # Track for cleanup
         view.setPixmap(view_pix.scaled(
             *app_config.ui.tree_display_size, 
             Qt.AspectRatioMode.KeepAspectRatio, 
@@ -217,6 +234,58 @@ class MainWindow(QMainWindow):
                 self, "Error", 
                 f"Please check everything and try again!\nError: {str(e)}"
             )
+    
+    def closeEvent(self, event):
+        """Handle window close event with proper cleanup"""
+        # Clean up analysis window
+        if self.analysis_window is not None:
+            try:
+                self.analysis_window.close()
+                self.analysis_window.deleteLater()
+            except RuntimeError:
+                pass  # Already deleted
+            self.analysis_window = None
+        
+        # Disconnect signals to break circular references
+        try:
+            if hasattr(self, 'method_combo') and self.method_combo is not None:
+                try:
+                    self.method_combo.currentIndexChanged.disconnect()
+                except TypeError:
+                    pass  # No connections
+        except (RuntimeError, AttributeError):
+            pass  # Already disconnected or deleted
+        
+        try:
+            if hasattr(self, 'method_btn') and self.method_btn is not None:
+                try:
+                    self.method_btn.clicked.disconnect()
+                except TypeError:
+                    pass  # No connections
+        except (RuntimeError, AttributeError):
+            pass  # Already disconnected or deleted
+        
+        # Clean up pixmaps
+        for pixmap in self._pixmaps:
+            try:
+                if pixmap is not None and not pixmap.isNull():
+                    # Clear pixmap data
+                    pixmap.detach()
+            except RuntimeError:
+                pass
+        self._pixmaps.clear()
+        self._pixmaps = None
+        
+        # Clean up references to break cycles
+        if hasattr(self, 'analysis_service'):
+            self.analysis_service = None
+        if hasattr(self, 'method_combo'):
+            self.method_combo = None
+        if hasattr(self, 'method_btn'):
+            self.method_btn = None
+        
+        # Accept the close event
+        event.accept()
 
 
 def create_application() -> QApplication:
