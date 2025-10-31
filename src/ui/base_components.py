@@ -60,6 +60,10 @@ class ProgressDialog(QDialog):
     def set_status(self, status: str) -> None:
         """Set status message"""
         self.status_label.setText(status)
+    
+    def closeEvent(self, event):
+        """Handle close event with cleanup"""
+        event.accept()
 
 
 class LoadingDialog(QDialog):
@@ -86,6 +90,14 @@ class LoadingDialog(QDialog):
 
         layout.addWidget(self.label)
         self.setLayout(layout)
+    
+    def closeEvent(self, event):
+        """Handle close event with cleanup"""
+        # Stop the movie animation
+        if hasattr(self, 'movie') and self.movie is not None:
+            self.movie.stop()
+            self.movie = None
+        event.accept()
 
 
 class WorkerThread(QThread):
@@ -115,6 +127,21 @@ class WorkerThread(QThread):
             self.finished.emit(result)
         except Exception as e:
             self.error.emit(e)
+    
+    def cleanup(self):
+        """Clean up thread resources"""
+        try:
+            # Disconnect all signals
+            self.finished.disconnect()
+            self.error.disconnect()
+            self.progress.disconnect()
+        except (RuntimeError, TypeError):
+            pass  # Already disconnected
+        
+        # Clear references
+        self.work_function = None
+        self.args = None
+        self.kwargs = None
 
 
 class ThreadProgressCallback(IProgressCallback):
