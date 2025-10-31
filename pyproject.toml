@@ -1,0 +1,50 @@
+# Test configuration file for pytest with testing requirements
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Markers for categorizing tests
+markers = [
+    "unit: Unit tests for individual components",
+    "integration: Integration tests for component interactions",
+    "e2e: End-to-end tests for complete workflows",
+    "gui: GUI-related tests requiring QApplication",
+    "slow: Tests that take significant time to run",
+    "memory: Memory leak and resource management tests",
+    "performance: Performance and benchmark tests",
+]
+
+# Add options for better output
+addopts = """
+    -v
+    --tb=short
+    --strict-markers
+    --disable-warnings
+    --color=yes
+    -ra
+"""
+
+# Coverage settings
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/env/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
